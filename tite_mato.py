@@ -82,6 +82,12 @@ class SnakeGame(QGraphicsView):
         fx, fy = self.food
         self.scene().addRect(fx * CELL_SIZE, fy * CELL_SIZE, CELL_SIZE, CELL_SIZE, QPen(Qt.black), QBrush(Qt.red))
 
+        # Game over text
+        #game_over_text = self.scene().addText("Game Over", QFont("Arial", 24))
+        #text_width = game_over_text.boundingRect().width()
+        #text_x = (self.width() - text_width) / 2
+        #game_over_text.setPos(text_x, GRID_HEIGHT * CELL_SIZE / 2)
+
     def start_game(self):
         self.direction = Qt.Key_Right
         self.snake = [(5, 5), (5, 6), (5, 7)]
