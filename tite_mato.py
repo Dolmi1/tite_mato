@@ -21,19 +21,12 @@ class SnakeGame(QGraphicsView):
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_game)
         
-        # starting game by button
-        self.game_started = False
-        self.init_screen()
+        self.start_game()
+        # for score calculation
+        self.score = 0
 
     def keyPressEvent(self, event):
         key = event.key()
-
-        # starting game by button
-        if not self.game_started:
-            if key == event.key():
-                self.game_started = True
-                self.scene().clear()
-                self.start_game()
 
         if key in (Qt.Key_Left, Qt.Key_Right, Qt.Key_Up, Qt.Key_Down):
             # Only update direction if the new direction is not opposite to the current direction
@@ -66,12 +59,8 @@ class SnakeGame(QGraphicsView):
         self.snake.insert(0, new_head)
   
         if new_head == self.food:
+            self.score += 1
             self.food = self.spawn_food()
-            # for levels
-            if self.score == self.level_limit:
-                self.level_limit += 5
-                self.timer_delay -= 50
-                self.timer.setInterval(self.timer_delay)
         else:
             self.snake.pop()    
 
@@ -83,34 +72,13 @@ class SnakeGame(QGraphicsView):
         for segment in self.snake:
             x, y = segment
             self.scene().addRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, QPen(Qt.black), QBrush(Qt.black))
-        # print food
-        fx, fy = self.food
-        self.scene().addRect(fx * CELL_SIZE, fy * CELL_SIZE, CELL_SIZE, CELL_SIZE, QPen(Qt.black), QBrush(Qt.red))
+        self.scene().addText(f"Score: {self.score}", QFont("Arial", 12)) 
 
     def start_game(self):
         self.direction = Qt.Key_Right
         self.snake = [(5, 5), (5, 6), (5, 7)]
 
         self.timer.start(300)
-        # for levels
-        self.level_limit = 5
-        self.timer_delay = 300
-
-        self.timer.start(self.timer_delay)
-
-    # add food
-    def spawn_food(self):
-        while True:
-            x = random.randint(0, GRID_WIDTH - 1)
-            y = random.randint(0, GRID_HEIGHT - 1)
-            if (x, y) not in self.snake:
-                return x, y
-            
-    def init_screen(self):
-        start_text = self.scene().addText("Press any key to start", QFont("Arial", 18))
-        text_width = start_text.boundingRect().width()
-        text_x = (self.width() - text_width) / 5
-        start_text.setPos(text_x, GRID_HEIGHT * CELL_SIZE / 2)
 
 def main():
     app = QApplication(sys.argv)
