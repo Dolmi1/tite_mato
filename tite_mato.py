@@ -48,6 +48,8 @@ class SnakeGame(QGraphicsView):
                 self.scene().clear()
                 self.start_game()
 
+
+
     def init_screen(self):
         start_text = self.scene().addText("Press any key to start", QFont("Arial", 18))
         text_width = start_text.boundingRect().width()
@@ -88,6 +90,10 @@ class SnakeGame(QGraphicsView):
         for segment in self.snake:
             x, y = segment
             self.scene().addRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE, QPen(Qt.black), QBrush(Qt.black))
+            
+            # print food
+        fx, fy = self.food
+        self.scene().addRect(fx * CELL_SIZE, fy * CELL_SIZE, CELL_SIZE, CELL_SIZE, QPen(Qt.black), QBrush(Qt.red))
         self.scene().addText(f"Score: {self.score}", QFont("Arial", 12)) 
 
         # Game over text
@@ -100,7 +106,26 @@ class SnakeGame(QGraphicsView):
         self.direction = Qt.Key_Right
         self.snake = [(5, 5), (5, 6), (5, 7)]
 
+        # food in start_game
+        self.food = self.spawn_food()
+
         self.timer.start(300)
+
+        # for levels
+        self.level_limit = 5
+        self.timer_delay = 300
+
+        self.timer.start(self.timer_delay)
+
+    # add food
+    def spawn_food(self):
+        while True:
+            x = random.randint(0, GRID_WIDTH - 1)
+            y = random.randint(0, GRID_HEIGHT - 1)
+            if (x, y) not in self.snake:
+                return x, y
+            
+    
 
 def main():
     app = QApplication(sys.argv)
